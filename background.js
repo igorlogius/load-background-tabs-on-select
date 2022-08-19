@@ -1,13 +1,14 @@
+/* global browser */
 
 let wasActive = new Set();
 
 browser.tabs.onUpdated.addListener( (tabId,changeInfo,tab) => {
 
 	// ignore
-	if(tab.active) { return; }   
-	if(tab.hidden) { return; }    
-	if(tab.discarded) { return; } 
-	if(wasActive.has(tabId)){ return; } 
+	if(tab.active) { return; }
+	if(tab.hidden) { return; }
+	if(tab.discarded) { return; }
+	if(wasActive.has(tabId)){ return; }
 
 	browser.tabs.discard(tabId);
 
@@ -18,7 +19,7 @@ browser.tabs.onActivated.addListener( (activeInfo) => {
 	wasActive.add(activeInfo.tabId);
 });
 
-browser.tabs.onRemoved.addListener( (tabId, removeInfo) => {
+browser.tabs.onRemoved.addListener( (tabId/*, removeInfo*/) => {
 	wasActive.delete(tabId);
 });
 
