@@ -1,5 +1,11 @@
 Prevents tabs which are opend in the background from loading until they have been manually activated once
 
+
+
+https://github.com/igorlogius/load-background-tabs-on-select/assets/67047467/83c02d4c-5da8-453f-90f5-5ee2a5e8d60c
+
+
+
 The inital reason to creating this addon, was so i could "CTRL+Click" on one of my bookmark folders which contain (quite a few) bookmarks 
 and the containing bookmarks would open without the browser freezing or becoming unresponsive, because i am sure my PC is a actually a potato in disguise.
 
