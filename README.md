@@ -1,6 +1,8 @@
 Prevents tabs which are opend in the background from loading until they have
 been manually activated once
 
+### [Click here to report a bug, make a suggestion or ask a question](https://github.com/igorlogius/igorlogius/issues/new/choose)
+
 <b>Short Demo Video:</b>
 
 https://github.com/igorlogius/load-background-tabs-on-select/assets/67047467/83c02d4c-5da8-453f-90f5-5ee2a5e8d60c
