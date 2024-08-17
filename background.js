@@ -182,3 +182,9 @@
   browser.browserAction.setBadgeText({ text: "on" });
   browser.browserAction.setBadgeBackgroundColor({ color: [0, 115, 0, 115] });
 })();
+
+browser.runtime.onInstalled.addListener(async (details) => {
+  if (details.reason === "install") {
+    browser.runtime.openOptionsPage();
+  }
+});
