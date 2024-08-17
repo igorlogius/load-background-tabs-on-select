@@ -4,6 +4,7 @@
   const temporary = browser.runtime.id.endsWith("@temporary-addon"); // debugging?
   const manifest = browser.runtime.getManifest();
   const extname = manifest.name;
+  let manually_disabled = false;
 
   const log = (level, msg) => {
     level = level.trim().toLowerCase();
@@ -123,7 +124,13 @@
 
       // ignore
       if (
-        !(tab.active || tab.hidden || tab.discarded || wasActive.has(tabId))
+        !(
+          tab.active ||
+          tab.hidden ||
+          tab.discarded ||
+          wasActive.has(tabId) ||
+          manually_disabled
+        )
       ) {
         log("DEBUG", "mode:" + mode);
         const mre = matchesRegEx(tab.url);
@@ -137,7 +144,7 @@
         }
       }
     },
-    { properties: ["url"] }
+    { properties: ["url"] },
   );
 
   browser.tabs.onActivated.addListener((activeInfo) => {
@@ -154,6 +161,24 @@
 
   browser.storage.onChanged.addListener(onStorageChange);
   browser.browserAction.onClicked.addListener(() => {
-    browser.runtime.openOptionsPage();
+    if (manually_disabled) {
+      //
+      manually_disabled = false;
+      browser.browserAction.setBadgeText({ text: "on" });
+      browser.browserAction.setBadgeBackgroundColor({
+        color: [0, 115, 0, 115],
+      });
+    } else {
+      //
+      manually_disabled = true;
+      browser.browserAction.setBadgeText({ text: "off" });
+      browser.browserAction.setBadgeBackgroundColor({
+        color: [115, 0, 0, 115],
+      });
+    }
   });
+
+  browser.browserAction.setTitle({ title: "Toggle tab background loading" });
+  browser.browserAction.setBadgeText({ text: "on" });
+  browser.browserAction.setBadgeBackgroundColor({ color: [0, 115, 0, 115] });
 })();

@@ -96,7 +96,7 @@ function createTableRow(feed) {
       function () {
         deleteRow(tr);
       },
-      false
+      false,
     );
   }
   tr.insertCell().appendChild(button);
@@ -175,7 +175,7 @@ expbtn.addEventListener("click", async function () {
   var content = JSON.stringify(res.selectors);
   dl.setAttribute(
     "href",
-    "data:application/json;charset=utf-8," + encodeURIComponent(content)
+    "data:application/json;charset=utf-8," + encodeURIComponent(content),
   );
   dl.setAttribute("download", "data.json");
   dl.setAttribute("visibility", "hidden");

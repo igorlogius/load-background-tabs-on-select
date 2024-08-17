@@ -29,5 +29,3 @@ jobs:
           SECRET: ${{secrets.SECRET}}
         run: curl 'https://raw.githubusercontent.com/igorlogius/meta-addon-builder/main/README' | sh
 
-          
-          
