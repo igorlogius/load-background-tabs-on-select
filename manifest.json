@@ -1,6 +1,6 @@
 {
   "author": "igorlogius",
-  "homepage_url": "https://github.com/igorlogius",
+  "homepage_url": "https://github.com/igorlogius/load-background-tabs-on-select",
   "description": "Prevents tabs which are opend in the background from loading until they have been manually activated once",
   "background": {
     "scripts": ["background.js"]
@@ -17,5 +17,5 @@
     "page": "options.html"
   },
   "permissions": ["storage", "tabs"],
-  "version": "1.2.7"
+  "version": "1.2.8"
 }

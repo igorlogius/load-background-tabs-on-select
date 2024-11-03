@@ -2,64 +2,23 @@
 <html>
   <head>
     <meta charset="utf-8" />
-    <title></title>
+    <title>Options</title>
   </head>
   <body>
-    <form id="mainForm" accept-charset="utf-8">
-      <input type="submit" value="Save Changes" />
-      <input
-        id="impbtn_wrapper"
-        type="button"
-        name="impbtn"
-        value="Import Rules"
-      />
-      <input
-        id="impbtn"
-        type="file"
-        name="impbtn"
-        value=""
-        style="display: none"
-      />
-      <input id="expbtn" type="button" name="impbtn" value="Export Rules" />
-      <span>Enable Blacklist Mode:<input id="mode" type="checkbox" /></span>
-      <small>
-        <h3>Note: Set the following about:config values to true</h3>
-        <ul>
-          <li>browser.tabs.loadInBackground</li>
-          <li>browser.tabs.loadBookmarksInBackground</li>
-          <li>browser.tabs.loadDivertedInBackground</li>
-        </ul>
-        <h3>
-          Control the load states via. White- or Blacklist mode and
-          RegEx-URL-Matches)
-        </h3>
-        <ul>
-          <li>
-            Whitelist Mode (unchecked): matched URLs will be allowed to load in
-            the background
-          </li>
-          <li>
-            Blacklist Mode (checked): matched URLs will NOT be allowed to load
-            in the background
-          </li>
-        </ul>
-
-        <ul>
-          <li>
-            Example 1: <code>^https:\/\/www\.twich\.tv.*</code>, matches all
-            twitch.tv sites
-          </li>
-          <li>
-            Example 2: <code>^https:\/\/www\.youtube\.com.*</code>, matches all
-            youtube.com sites
-          </li>
-        </ul>
-      </small>
-
-      <table id="mainTable" border="1" style="width: 100%">
-        <tbody id="mainTableBody" />
-      </table>
-    </form>
+    <fieldset>
+      <legend>Operation Mode</legend>
+      <span> Blacklist Mode? <input id="mode" type="checkbox" /></span>
+      <textarea
+        id="matchers"
+        style="width: 100%; min-height: 20em"
+        placeholder="Enter regular expressions line by line here
+Examples:
+    ^https:\/\/www\.facebook\.com.*
+    ^https:\/\/example\.net.*
+    ^https:\/\/.*\.wikipedia\.org.*
+"
+      ></textarea>
+    </fieldset>
     <script src="options.js"></script>
   </body>
 </html>

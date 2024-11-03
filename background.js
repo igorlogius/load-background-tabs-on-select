@@ -1,104 +1,47 @@
 /* global browser */
 
+async function getFromStorage(type, id, fallback) {
+  let tmp = await browser.storage.local.get(id);
+  return typeof tmp[id] === type ? tmp[id] : fallback;
+}
+
+async function setToStorage(id, value) {
+  let obj = {};
+  obj[id] = value;
+  return browser.storage.local.set(obj);
+}
+
 (async () => {
   const temporary = browser.runtime.id.endsWith("@temporary-addon"); // debugging?
   const manifest = browser.runtime.getManifest();
   const extname = manifest.name;
   let manually_disabled = false;
 
-  const log = (level, msg) => {
-    level = level.trim().toLowerCase();
-    if (
-      ["error", "warn"].includes(level) ||
-      (temporary && ["debug", "info", "log"].includes(level))
-    ) {
-      console[level](extname + "::" + level.toUpperCase() + "::" + msg);
-      return;
-    }
-  };
-
   async function getMode() {
-    //log("debug", "getMode");
-    let store = undefined;
-    try {
-      store = await browser.storage.local.get("mode");
-    } catch (e) {
-      log("error", "access to storage failed");
-      return false;
-    }
-    if (typeof store === "undefined") {
-      log("debug", "store is undefined");
-      return false;
-    }
-    if (typeof store.mode !== "boolean") {
-      log("debug", "store.mode is not boolean");
-      return false;
-    }
-    return store.mode;
+    return await getFromStorage("boolean", "mode", false);
   }
 
   async function getRegexList() {
-    //log("debug", "getRegexList");
+    let out = [];
+    let tmp = await getFromStorage("string", "matchers", "");
 
-    let store = undefined;
-    try {
-      store = await browser.storage.local.get("selectors");
-    } catch (e) {
-      log("error", "access to storage failed");
-      return [];
-    }
-
-    if (typeof store === "undefined") {
-      log("debug", "store is undefined");
-      return [];
-    }
-
-    if (typeof store.selectors === "undefined") {
-      log("debug", "store.selectors is undefined");
-      return [];
-    }
-
-    if (typeof store.selectors.forEach !== "function") {
-      log("error", "store.selectors is not iterable");
-      return [];
-    }
-
-    const l = [];
-
-    store.selectors.forEach((e) => {
-      // check activ
-      if (typeof e.activ !== "boolean") {
-        return;
-      }
-      if (e.activ !== true) {
-        return;
-      }
-
-      // check url regex
-      if (typeof e.url_regex !== "string") {
-        return;
-      }
-      e.url_regex = e.url_regex.trim();
-      if (e.url_regex === "") {
-        return;
-      }
-
-      try {
-        //log("debug", e.url_regex);
-        l.push(new RegExp(e.url_regex));
-      } catch (e) {
-        log("WARN", "invalid url regex : " + e.url_regex);
-        return;
+    tmp.split("\n").forEach((line) => {
+      line = line.trim();
+      if (line !== "") {
+        try {
+          line = new RegExp(line.trim());
+          out.push(line);
+        } catch (e) {
+          console.error(e);
+        }
       }
     });
-
-    return l;
+    return out;
   }
 
   function matchesRegEx(url) {
     for (let i = 0; i < regexList.length; i++) {
       if (regexList[i].test(url)) {
-        //log("debug", "matchesRegEx: " + url);
         return true;
       }
     }
@@ -106,13 +49,11 @@
   }
 
   async function onStorageChange(/*changes, area*/) {
-    //log("debug", "onStorageChange");
     mode = await getMode();
     regexList = await getRegexList();
   }
 
-  let mode = await getMode();
-  let regexList = await getRegexList();
+  await onStorageChange();
 
   // -------------------------------
 
@@ -120,8 +61,6 @@
 
   browser.tabs.onUpdated.addListener(
     (tabId, changeInfo, tab) => {
-      //log("DEBUG", "onUpdated" + JSON.stringify(changeInfo, null, 4));
-
       // ignore
       if (
         !(
@@ -132,13 +71,11 @@
           manually_disabled
         )
       ) {
-        log("DEBUG", "mode:" + mode);
         const mre = matchesRegEx(tab.url);
-        log("DEBUG", "mre:" + mre);
 
         if (
-          (!mode && !mre) || // whitelist => matches are allowed to load <=> no match => not allowed
-          (mode && mre) // blacklist => matches are not allowed to load
+          (mode && mre) || // blacklist(true) => matches are not allowed to load
+          (!mode && !mre) // whitelist(false) => matches are allowed to load <=> no match => not allowed
         ) {
           browser.tabs.discard(tabId);
         }
@@ -186,5 +123,10 @@
 browser.runtime.onInstalled.addListener(async (details) => {
   if (details.reason === "install") {
     browser.runtime.openOptionsPage();
+  } else {
+    // Migrate old data
+    let tmp = await getFromStorage("object", "selectors", []);
+    tmp = tmp.map((e) => e.url_regex).join("\n");
+    await setToStorage("matchers", tmp);
   }
 });
