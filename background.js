@@ -68,7 +68,8 @@ async function setToStorage(id, value) {
           tab.hidden ||
           tab.discarded ||
           wasActive.has(tabId) ||
-          manually_disabled
+          manually_disabled ||
+          !changeInfo.url.startsWith("http")
         )
       ) {
         const mre = matchesRegEx(tab.url);
@@ -78,6 +79,7 @@ async function setToStorage(id, value) {
           (!mode && !mre) // whitelist(false) => matches are allowed to load <=> no match => not allowed
         ) {
           browser.tabs.discard(tabId);
+          // console.debug("discarded", tab.url);
         }
       }
     },
