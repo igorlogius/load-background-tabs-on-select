@@ -1,5 +1,4 @@
-Prevents tabs which are opend in the background from loading until they have
-been manually activated once
+Prevents background tabs from loading until they have been manually activated
 
 [![](https://raw.githubusercontent.com/igorlogius/igorlogius/main/geFxAddon.png)](https://addons.mozilla.org/firefox/addon/load-background-tabs-on-select/)
 
