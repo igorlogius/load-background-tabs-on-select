@@ -49,6 +49,20 @@ async function setToStorage(id, value) {
   }
 
   async function onStorageChange(/*changes, area*/) {
+    manually_disabled = await getFromStorage('boolean',"manually_disabled", true);
+    if (!manually_disabled) {
+      //
+      browser.browserAction.setBadgeText({ text: "on" });
+      browser.browserAction.setBadgeBackgroundColor({
+        color: [0, 115, 0, 115],
+      });
+    } else {
+      //
+      browser.browserAction.setBadgeText({ text: "off" });
+      browser.browserAction.setBadgeBackgroundColor({
+        color: [115, 0, 0, 115],
+      });
+    }
     mode = await getMode();
     regexList = await getRegexList();
   }
@@ -100,6 +114,7 @@ async function setToStorage(id, value) {
 
   browser.storage.onChanged.addListener(onStorageChange);
   browser.browserAction.onClicked.addListener(() => {
+        console.debug(manually_disabled);
     if (manually_disabled) {
       //
       manually_disabled = false;
@@ -115,6 +130,7 @@ async function setToStorage(id, value) {
         color: [115, 0, 0, 115],
       });
     }
+    setToStorage('manually_disabled', manually_disabled);
   });
 
   browser.browserAction.setTitle({ title: "Toggle tab background loading" });
