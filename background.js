@@ -52,7 +52,7 @@ async function setToStorage(id, value) {
     manually_disabled = await getFromStorage(
       "boolean",
       "manually_disabled",
-      true,
+      false,
     );
     if (!manually_disabled) {
       //
